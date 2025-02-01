@@ -13,39 +13,36 @@ Ensure you have the following dependencies installed:
 
 ### Setting Up the Environment
 1. Clone the repository:
-   \`\`\`bash
+   ```bash
    git clone https://github.com/Robo-MD/Robo-MD-RSS.github.io.git
    cd Robo-MD-RSS.github.io
-   \`\`\`
+   ```
 
 2. Create a Conda environment:
-   \`\`\`bash
+   ```bash
    conda create --name robomd python=3.8 -y
    conda activate robomd
-   \`\`\`
+   ```
 
 ### Installing Dependencies
 #### 1. **Install robosuite**
-   \`\`\`bash
+   ```bash
    pip install robosuite
-   \`\`\`
-   If you need MuJoCo for simulation:
-   \`\`\`bash
-   pip install mujoco
-   \`\`\`
+   ```
+
 
 #### 2. **Install robomimic**
-   \`\`\`bash
+   ```bash
    git clone https://github.com/ARISE-Initiative/robomimic.git
    cd robomimic
    pip install -e .
-   \`\`\`
+   ```
 
 #### 3. **Additional Dependencies**
    Install required Python packages:
-   \`\`\`bash
+   ```bash
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 
 ## Usage
