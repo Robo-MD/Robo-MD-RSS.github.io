@@ -18,3 +18,12 @@ def cosine_similarity_manual(vec_a, vec_b):
     norm_b = np.linalg.norm(vec_b)
     sim = dot_product / (norm_a * norm_b + 1e-8)
     return np.clip(sim, -1.0, 1.0)
+    
+def find_closest_value(new_embedding, embeddings_array, values_array):
+    """
+    If you want a standalone function for finding the closest embedding.
+    This is often used if you do it outside the environment class.
+    """
+    distances = cdist([new_embedding], embeddings_array, metric="euclidean")[0]
+    idx = np.argmin(distances)
+    return values_array[idx], distances[idx]
