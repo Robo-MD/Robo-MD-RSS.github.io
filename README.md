@@ -44,8 +44,49 @@ Ensure you have the following dependencies installed:
    pip install -r requirements.txt
    ```
 
+## Project Structure
+
+```
+├── configs/               # Configuration files for actions and training
+├── env/                   # Environment implementations (Latent Action Env)
+├── scripts/               # Training scripts for discrete/continuous policies
+├── utils/                 # Utility functions (e.g., loss computations)
+├── train_continuous.py     # Training script for continuous latent actions
+├── train_discrete.py       # Training script for discrete latent actions
+├── train_embedding.py      # Training script for embedding learning
+├── README.md               # Project documentation
+├── requirements.txt        # Required dependencies
+```
+
+---
 
 ## Usage
+
+### Training with Latent Actions
+
+To train an RL policy using a latent action space, run:
+```bash
+python train_continuous.py --name <run_name> --task <task_name> --agent <path_to_agent> --rl_timesteps 3000
+```
+Example:
+```bash
+python train_continuous.py --name latent_rl --task lift --agent models/bc_agent.pth --rl_timesteps 50000
+```
+
+### Training Discrete Action Policies
+
+For training RL with a discrete action space:
+```bash
+python train_discrete.py --name <run_name> --task <task_name> --agent <path_to_agent> --rl_timesteps 3000
+```
+
+### Training Embeddings
+
+To train and store known embeddings:
+```bash
+python train_embedding.py --path <dataset_path>
+```
+This script extracts embeddings from a dataset and stores them in an HDF5 file.
 
 
 
