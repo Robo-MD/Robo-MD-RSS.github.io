@@ -1,6 +1,6 @@
-# RoboFail: Analyzing Failures in Robot Learning Policies
+# From Mystery to Mastery: Failure Diagnosis for Improving Manipulation Policies
 
-RoboFail is a deep reinforcement learning-based framework designed to identify failure modes in robotic manipulation policies. By simulating diverse conditions and quantifying failure probabilities, RoboFail provides insights into model robustness and adaptability.
+We introduce RoboMD a deep reinforcement learning-based framework designed to identify failure modes in robotic manipulation policies. By simulating diverse conditions and quantifying failure probabilities, RoboFail provides insights into model robustness and adaptability.
 
 ## Installation
 
