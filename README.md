@@ -48,8 +48,8 @@ Ensure you have the following dependencies installed:
 
 ```
 ├── configs/               # Configuration files for actions and training
-├── env/                   # Environment implementations (Latent Action Env)
-├── scripts/               # Training scripts for discrete/continuous policies
+├── env/                   # Environment implementations
+├── scripts/               
 ├── utils/                 # Utility functions (e.g., loss computations)
 ├── train_continuous.py     # Training script for continuous latent actions
 ├── train_discrete.py       # Training script for discrete latent actions
@@ -62,7 +62,7 @@ Ensure you have the following dependencies installed:
 
 ## Usage
 
-### Training with Latent Actions
+### Training with Continuous Actions
 
 To train an RL policy using a latent action space, run:
 ```bash
