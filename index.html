@@ -258,6 +258,46 @@
   height: 50px;
 }
 
+.code-data-container {
+  display: flex;
+  gap: 2rem;        /* space between each icon block */
+  flex-wrap: wrap;  /* let items wrap on smaller screens */
+  align-items: center;
+  justify-content: center; /* center the entire row horizontally */
+}
+
+    /* Each icon + text is stacked in a column */
+    .icon-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .icon-block img {
+      width: 60px;  /* adjust as needed */
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Style the links (teal color, underlined) */
+    .icon-block a {
+      color: #008B8B;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+    
+    /* Subtle dashed or dotted underline look:
+       If you prefer dotted, replace 'dashed' with 'dotted'. */
+    .icon-block a {
+      text-decoration: none;
+      border-bottom: 1px dashed #008B8B;
+      padding-bottom: 2px;
+    }
+    .icon-block a:hover {
+      border-bottom-style: solid;  /* hover effect */
+    }
+
   </style>
 </head>
 <body>
@@ -277,7 +317,22 @@
         <div class="subtitle"> <b>Anonymous Submission</b></div>
       </header>
 
-      <br><br>
+      <br>
+      <center>
+        <div class="code-data-container">
+          
+          <!-- GitHub Repo -->
+          <div class="icon-block">
+            <img src="images/github.png" alt="GitHub Icon">
+            <a href="https://github.com/Robo-MD/Robo-MD-RSS.github.io" target="_blank">
+              Code
+            </a>
+          </div>
+      
+        </div>
+    
+      </center>
+      <br>
     
   <!-- Main Video Section -->
   <div class="video-container">
@@ -287,6 +342,10 @@
       Your browser does not support the video tag.
     </video>
   </div>
+
+
+
+
 
   <!-- Abstract Section -->
   <section class="abstract-container">
