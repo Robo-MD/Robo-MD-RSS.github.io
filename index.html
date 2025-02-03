@@ -1,11 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anonymous Page</title>
+    <meta charset="utf-8">
+    <title>SAM2Act</title>
+    <meta name="description" content="SAM2Act">
+    <meta name="keywords" content="Foundation Model, Affordance Prediction">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <!-- <link rel="stylesheet" href="./static/css/fontawesome.all.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script defer src="./static/js/fontawesome.all.min.js"></script> -->
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <script type="text/javascript">
+        function init() {
+            const video_sam2act = document.getElementById("simulation-menu-video-sam2act");
+            video_sam2act.addEventListener("error", () => {
+                console.log("Error loading video: ", video_sam2act.src);
+            }, true);
+
+            const video_baseline = document.getElementById("simulation-menu-video-baseline");
+            video_baseline.addEventListener("error", () => {
+                console.log("Error loading video: ", video_baseline.src);
+            }, true);
+
+            const video_comparison_sam2act = document.getElementById("comparison-menu-video-sam2act");
+            video_comparison_sam2act.addEventListener("error", () => {
+                console.log("Error loading video: ", video_comparison_sam2act.src);
+            }, true);
+
+            const video_comparison_rvt2 = document.getElementById("comparison-menu-video-rvt2");
+            video_comparison_rvt2.addEventListener("error", () => {
+                console.log("Error loading video: ", video_comparison_rvt2.src);
+            }, true);
+
+            const video_memorybench = document.getElementById("memorybench-menu-video-method");
+            video_memorybench.addEventListener("error", () => {
+                console.log("Error loading video: ", video_memorybench.src);
+            }, true);
+        }
+
+        function updateTaskVideo() {
+            const task = document.getElementById("simulation-menu-task-name").value;
+            const baseline = document.getElementById("simulation-menu-baseline-name").value;
+
+            const video_sam2act = document.getElementById("simulation-menu-video-sam2act");
+            video_sam2act.src = `static/videos/simulation/sam2act/${task}_fixed.mp4`;;
+            video_sam2act.playbackRate = 1.75;
+            video_sam2act.play();
+
+            const video_baseline = document.getElementById("simulation-menu-video-baseline");
+            video_baseline.src = `static/videos/simulation/${baseline}/${task}_fixed.mp4`;
+            video_baseline.playbackRate = 1.75;
+            video_baseline.play();
+        }
+
+        function updateComparisonVideo() {
+            const task = document.getElementById("comparison-menu-task-name").value;
+            const episode = document.getElementById("comparison-menu-episode-name").value;
+
+            const video_sam2act = document.getElementById("comparison-menu-video-sam2act");
+            video_sam2act.src = `static/videos/comparison/${task}/vid_sam2act_in_distribution_${episode}.mp4`;
+            video_sam2act.playbackRate = 1.75;
+            video_sam2act.play();
+
+            const video_rvt2 = document.getElementById("comparison-menu-video-rvt2");
+            video_rvt2.src = `static/videos/comparison/${task}/vid_rvt2_in_distribution_${episode}.mp4`;
+            video_rvt2.playbackRate = 1.75;
+            video_rvt2.play();
+        }
+
+        function updateMemoryBenchVideo() {
+            const task = document.getElementById("memorybench-menu-task-name").value;
+            const method = document.getElementById("memorybench-menu-method-name").value;
+            const episode = document.getElementById("memorybench-menu-episode-name").value;
+
+            const video = document.getElementById("memorybench-menu-video-method");
+            video.src = `static/videos/memorybench/${method}/${task}_${episode}_fixed.mp4`;
+            video.playbackRate = 1.75;
+            video.play();
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function updateColosseumVideo() {
+            const available_episodes = [
+                "basketball_in_hoop_0_s0",
+                "basketball_in_hoop_0_s1",
+                "basketball_in_hoop_0_s2",
+                // "close_box_1_s0",
+                "close_box_1_s1",
+                "close_box_1_s2",
+                "close_laptop_lid_2_s0",
+                "close_laptop_lid_2_s1",
+                // "close_laptop_lid_2_s2",
+                // "hockey_5_s0",
+                // "hockey_5_s1",
+                // "hockey_5_s2",
+                // "setup_chess_14_s0",
+                // "setup_chess_14_s1",
+                // "setup_chess_14_s2",
+                "insert_onto_square_peg_6_s0",
+                "insert_onto_square_peg_6_s1",
+                "insert_onto_square_peg_6_s2",
+                "stack_cups_13_s0",
+                // "stack_cups_13_s1",
+                // "stack_cups_13_s2",
+                // "straighten_rope_10_s0",
+                // "straighten_rope_10_s1",
+                "straighten_rope_10_s2",
+                "meat_on_grill_8_s0",
+                "meat_on_grill_8_s1",
+                "meat_on_grill_8_s2",
+                "turn_oven_on_12_s0",
+                "turn_oven_on_12_s1",
+                "turn_oven_on_12_s2",
+                // "move_hanger_9_s0",
+                // "move_hanger_9_s1",
+                "move_hanger_9_s2",
+                // "empty_dishwasher_3_s0",
+                // "empty_dishwasher_3_s1",
+                // "empty_dishwasher_3_s2",
+                // "wipe_desk_11_s0",
+                // "wipe_desk_11_s1",
+                "wipe_desk_11_s2",
+                "place_wine_at_rack_location_7_s0",
+                "place_wine_at_rack_location_7_s1",
+                "place_wine_at_rack_location_7_s2",
+                // "get_ice_from_fridge_4_s0",
+                // "get_ice_from_fridge_4_s1",
+                "get_ice_from_fridge_4_s2"
+            ];
+
+            const ep_index = getRandomInt(available_episodes.length);
+            const uri = `static/videos/colosseum/${available_episodes[ep_index]}_fixed.mp4`;
+
+            const video = document.getElementById("colosseum-menu-video-episode");
+            video.src = uri;
+            video.playbackRate = 1.75;
+            video.play();
+        }
+
+        function updateComparisonOutDistVideo() {
+            const task = document.getElementById("outdistribution-menu-task-name").value;
+            const episode = document.getElementById("outdistribution-menu-episode-name").value;
+
+            if (task == "push_buttons") {
+                const episode_elm = document.getElementById("outdistribution-menu-episode-name");
+                episode_elm.options[1].disabled = true;
+                episode_elm.options[2].disabled = true;
+            }
+            else {
+                const episode_elm = document.getElementById("outdistribution-menu-episode-name");
+                episode_elm.options[1].disabled = false;
+                episode_elm.options[2].disabled = false;
+            }
+
+            const video_sam2act = document.getElementById("outdistribution-menu-video-sam2act");
+            video_sam2act.src = `static/videos/out_of_distribution/${task}/vid_sam2act_turn_on_out_${episode}.mp4`;
+            video_sam2act.playbackRate = 1.75;
+            video_sam2act.play();
+
+            const video_rvt2 = document.getElementById("outdistribution-menu-video-rvt2");
+            video_rvt2.src = `static/videos/out_of_distribution/${task}/vid_rvt_turn_on_out_${episode}.mp4`;
+            video_rvt2.playbackRate = 1.75;
+            video_rvt2.play();
+        }
+    </script>
+
+
+
 </head>
-<body>
-    <h1>Anonymous Page</h1>
+
+<body onload="init(); updateTaskVideo(); updateComparisonVideo(); updateMemoryBenchVideo(); updateColosseumVideo(); updateComparisonOutDistVideo();">
+    <!-- Title / Authors Info -->
+    <section class="hero">
+        <div  class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title">
+                        <img src="static/images/Screenshot 2025-02-02 at 7.22.06 PM.png" alt="Emoji" style="width: 50px; height: 50px; vertical-align: middle;">
+                        From Mystery to Mastery: Failure Diagnosis for Improving Manipulation Policies
+                        </h1>
+                        <div class="is-size-5 publication-authors">
+                            <div class="column has-text-centered">
+                                <h3><b>Anonymous Submission</b></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <!-- Video Teaser -->
+            <video id="teaser" autoplay muted muted loop playsinline height="100">
+                <source src="static/videos/RSS.mp4" type="video/mp4">
+            </video>
+            <!-- /Video Teaser -->
+            <br/>
+            <br/>
+            <!-- Abstract. -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Robot manipulation policies often fail for unknown reasons, posing significant challenges for real-world deployment. Researchers and engineers typically address these failures using heuristic approaches, which are not only labor-intensive and costly but also prone to overlooking critical failure modes (FMs). This paper introduces Robot Manipulation Diagnosis (RoboMD), a systematic framework designed to automatically identify FMs arising from unexpected changes in the environment. To navigate the vast space of potential FMs for a given pre-trained manipulation policy, we leverage deep reinforcement learning (deep RL) to explore and uncover these FMs using a specially trained vision-language embedding that encodes a notion of failures. This approach enables users to probabilistically quantify and rank failures in previously unseen environmental conditions. Through extensive experiments across various manipulation tasks and algorithms, we demonstrate RoboMD's effectiveness in diagnosing unknown failures in unstructured environments, providing a systematic pathway to enhance the robustness of manipulation policies.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--/ Abstract. -->
+        </div>
+    </section>
+
+    <section class="hero is-light is-small">
+        <div class="hero-body">
+          <div class="container">
+            <div class="column has-text-centered">
+              <h3 class="title is-5">Real World Results</h3>
+            </div>
+            <div id="results-carousel" class="carousel results-carousel">
+              <div class="item item-steve">
+                <video id="video-steve" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2671.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-fullbody">
+                <video id="video-fullbody" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2672.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-shiba">
+                <video id="video-shiba" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2676.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-ender">
+                <video id="video-ender1" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2677.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-ender">
+                <video id="video-ender2" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2678.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-ender">
+                <video id="video-ender3" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2673.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="item item-ender">
+                <video id="video-ender4" autoplay muted loop playsinline>
+                  <source src="static/videos/real_world/IMG_2674.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <br>
+            <br>
+          </div>
+        </div>
+      </section>
+      
+
+    <section class="section">
+        <div class="container is-max-desktop">
+
+            <div class="columns is-centered has-text-centered">
+                <div class="column">
+                    <h2 class="title is-3">Summary</h2>
+                    <p>
+                        <figure>
+                            <img src="static/images/fig2.png" style="max-width: 100%; height: auto;">
+                        </figure>
+                        <br>
+                        <div class="content has-text-justified">
+                            Robot Manipulation Diagnosis (RoboMD), a systematic framework designed to automatically identify FMs arising from unanticipated changes in the environment. Considering the vast space of potential FMs in a pre-trained manipulation policy, we leverage deep reinforcement learning (deep RL) to explore and uncover these FMs using a specially trained vision-language embedding that encodes a notion of failures. This approach enables users to probabilistically quantify and rank failures in previously unseen environmental conditions. Through extensive experiments across various manipulation tasks and algorithms, we demonstrate RoboMD's effectiveness in diagnosing unknown failures in unstructured environments, providing a systematic pathway to improve the robustness of manipulation policies.                        </div>
+                    </p>
+                </div>
+            </div>
+
+            <div class="columns is-centered has-text-centered">
+                <div class="column">
+                    <h2 class="title is-3">Experiments and Results</h2>
+                    <p>
+                        <figure>
+                            <img src="static/images/fig3.png"></a>
+                        </figure>
+                        <br>
+                        <p>
+                            Individual FM analysis of multiple models. Each radar plot represents the failure likelihood of a specific actions. The axes correspond to different environmental setups (e.g., Red Cube, Green Table, Blue Table) (a) for real-world setup and (b,c) for simulation, and the numbers indicate the probability of failure for actions under each configuration.
+                        </p>
+                    </p>
+                    <br>
+                    <br>
+                    <p>
+                        <figure>
+                            <img src="static/images/fig4.png"></a>
+                        </figure>
+                        <br>
+                        <p>
+                            Comparison of rankings for failure-inducing actions in continuous and discrete action spaces. ar represent actions performed in the real robot environment ar 1 = “Bread” (Unseen), ar 2 = “Red Cube”, ar 3 = “Milk Carton”, ar 4 = “Sprite”. as represent the actions performed in simluated environment as1 = “Red Table”, as2 = “Black Table” (Unseen), as3 = “Green Lighting.” Rank consistency indicates whether the rankings are preserved across the two formulations. The accuracy is computed over 21 environment variations.
+                        </p>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Simulation Results -->
+  
+
+
+<!-- MemoryBench Results -->
+<section class="section">
+    <div class="container is-max-widescreen has-text-centered">
+      <h2 class="title">Results on MemoryBench</h2>
+      Task
+      <div class="select is-small">
+        <select id="memorybench-menu-task-name" onchange="updateMemoryBenchVideo()">
+          <option value="square" selected="selected">Square</option>
+          <option value="thread">Thread</option>
+          <option value="stack">Stack</option>
+        </select>
+      </div>
+      Policy
+      <div class="select is-small">
+        <select id="memorybench-menu-method-name" onchange="updateMemoryBenchVideo()">
+          <option value="rvt" selected="selected">Diffusion Policy</option>
+          <option value="sam2act">BC</option>
+        </select>
+      </div>
+      Perturbation
+      <div class="select is-small">
+        <select id="memorybench-menu-episode-name" onchange="updateMemoryBenchVideo()">
+          <option value="red_table" selected="selected">Red Table</option>
+          <option value="robo_color">Robot Color</option>
+          <option value="table_size">Table Size</option>
+          <option value="default">Default</option>
+          <option value="lighting">Lighting</option>
+        </select>
+      </div>
+      <br>
+      <br>
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="columns is-centered">
+            <div class="column content">
+              <video id="memorybench-menu-video-method" muted autoplay loop playsinline>
+                <source src="static/videos/memorybench/rvt/square_default_fixed.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+
 </body>
 </html>
