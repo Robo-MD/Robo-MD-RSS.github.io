@@ -20,7 +20,7 @@
 
     body {
       font-family:'Google Sans', 'Noto Sans', 'Castoro', sans-serif;;
-      background-color: #f4f4f4;
+      background-color: white;
       padding: 20px;
       color: #333;
     }
@@ -472,7 +472,6 @@
       <option value="task2">Can</option>
       <option value="task3">Square</option>
       <option value="task4">Stack</option>
-      <option value="task5">Threading</option>
     </select>
 
     <!-- Perturbation Dropdown (will be filled dynamically based on Task) -->
@@ -499,7 +498,7 @@
     const slider = document.querySelector('.slider');
     let currentIndex = 0;
     const videosPerPage = 3; // Number of videos to show at a time
-
+  
     function nextSlide() {
       const totalVideos = document.querySelectorAll('.slider video').length;
       if (currentIndex < totalVideos - videosPerPage) {
@@ -509,7 +508,7 @@
       }
       updateSlider();
     }
-
+  
     function prevSlide() {
       const totalVideos = document.querySelectorAll('.slider video').length;
       if (currentIndex > 0) {
@@ -519,12 +518,12 @@
       }
       updateSlider();
     }
-
+  
     function updateSlider() {
       const offset = -currentIndex * (100 / videosPerPage);
       slider.style.transform = `translateX(${offset}%)`;
     }
-
+  
     // Initialize Swiper (if you're using Swiper for something)
     var swiper = new Swiper('.swiper-container', {
       slidesPerView: 3,
@@ -539,17 +538,18 @@
         clickable: true,
       },
     });
-
+  
     // Speed up playback rate for videos with class "video-speedup" if desired
     document.querySelectorAll(".video-speedup").forEach(video => {
       video.playbackRate = 2.0;
     });
-
+  
     /**********************************************************************
-     * (NEW) Dynamic population of Perturbation dropdown based on Task
+     * (NEW) Dynamic population of Perturbation dropdown based on Task,
+     * with special names for the BC Transformer – Square combination.
      **********************************************************************/
-
-    // 1) Define possible perturbations for each task lift, can , square, stack, threading
+  
+    // 1) Define possible perturbations for each task
     const perturbationsByTask = {
       task1: [ 
         { value: "perturbation1", text: "Default" },
@@ -588,29 +588,44 @@
         { value: "perturbation5", text: "Lighting Color" },
       ],
     };
-
-    // 2) References to our dropdowns + main video
+  
+    // 2) References to our dropdowns + secondary video
     const algorithmSelect = document.getElementById('algorithmSelect');
     const taskSelect = document.getElementById('taskSelect');
     const perturbationSelect = document.getElementById('perturbationSelect');
     const selectionVideo = document.getElementById('secondaryVideo');
-
-
-    // 3) Populate the Perturbation dropdown based on the current Task
+  
+    // 3) Update the Perturbation dropdown with special case for BC Transformer – Square
     function updatePerturbationDropdown(selectedTask) {
-      // Clear existing options in the "perturbationSelect"
+      // Clear existing options in the perturbationSelect dropdown
       perturbationSelect.innerHTML = "";
-
-      // If this task is not in our dictionary, do nothing
-      if (!perturbationsByTask[selectedTask]) return;
-
-      // Otherwise, create an <option> for each possible perturbation
-      perturbationsByTask[selectedTask].forEach(({ value, text }) => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = text;
-        perturbationSelect.appendChild(option);
-      });
+  
+      // Special case: if the selected algorithm is BC Transformer (algo4)
+      // and the task is Square (task3), use custom display names.
+      if (algorithmSelect.value === "algo4" && selectedTask === "task3") {
+        const customPerturbations = [
+          { value: "perturbation1", text: "Default" },
+          { value: "perturbation4", text: "Cylinder Color" },
+          { value: "perturbation5", text: "Table Size" },
+          { value: "perturbation6", text: "Cylinder Size" },
+          { value: "perturbation7", text: "Lighting Color" },
+        ];
+        customPerturbations.forEach(({ value, text }) => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = text;
+          perturbationSelect.appendChild(option);
+        });
+      } else {
+        // Default: use the standard perturbations for the selected task.
+        if (!perturbationsByTask[selectedTask]) return;
+        perturbationsByTask[selectedTask].forEach(({ value, text }) => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = text;
+          perturbationSelect.appendChild(option);
+        });
+      }
     }
 
     // 4) Map (algo + task + perturbation) => specific video path
@@ -776,38 +791,42 @@
         'algo5-task5-perturbation5': 'videos/sim_videos/Threading/Diff/5.mp4',
     };
     // 5) Update the "mainVideo" source whenever any dropdown changes
-    function updateVideo() {
-      const selectedAlgo = algorithmSelect.value;     // e.g. 'algo1'
-      const selectedTask = taskSelect.value;          // e.g. 'task2'
-      const selectedPert = perturbationSelect.value;  // e.g. 'perturbation1'
+  // 5) Update the secondary video source whenever any dropdown changes
+  function updateVideo() {
+    const selectedAlgo = algorithmSelect.value;     // e.g. 'algo4'
+    const selectedTask = taskSelect.value;            // e.g. 'task3'
+    const selectedPert = perturbationSelect.value;    // e.g. 'perturbation1'
+    // Construct the key for the videoMapping
+    const videoKey = `${selectedAlgo}-${selectedTask}-${selectedPert}`;
+    const videoUrl = videoMapping[videoKey] || 'videos/sim_videos/Lift/BC/default.mp4';
+    
+    // Update the video source and play
+    selectionVideo.src = videoUrl;
+    selectionVideo.load();
+    selectionVideo.play();
+  }
 
-      // Construct a key and see if we have a specific match
-      const videoKey = `${selectedAlgo}-${selectedTask}-${selectedPert}`;
-      const videoUrl = videoMapping[videoKey] || 'videos/sim_videos/Lift/BC/default.mp4';
-      
+  // 6) Event listeners for the dropdowns
+  // When the task changes, update both the perturbation dropdown and the video.
+  taskSelect.addEventListener('change', () => {
+    updatePerturbationDropdown(taskSelect.value);
+    updateVideo();
+  });
 
-      // Update the video source and play
-      selectionVideo.src = videoUrl;
-      selectionVideo.load();
-      selectionVideo.play();
-    }
+  // When the algorithm changes, update the perturbation dropdown (to check for special case) and the video.
+  algorithmSelect.addEventListener('change', () => {
+    updatePerturbationDropdown(taskSelect.value);
+    updateVideo();
+  });
 
-    // 6) Event listeners for the dropdowns
-    algorithmSelect.addEventListener('change', updateVideo);
-    taskSelect.addEventListener('change', () => {
-      // Whenever the user picks a new Task, rebuild the Perturbation dropdown
-      updatePerturbationDropdown(taskSelect.value);
-      // Then optionally update the video
-      updateVideo();
-    });
-    perturbationSelect.addEventListener('change', updateVideo);
+  // When the perturbation changes, update the video.
+  perturbationSelect.addEventListener('change', updateVideo);
 
-    // 7) On page load, initialize the Perturbation dropdown for the default Task
-    //    and set the video accordingly.
-    window.addEventListener('DOMContentLoaded', () => {
-      updatePerturbationDropdown(taskSelect.value);
-      updateVideo();
-    });
-  </script>
+  // 7) On page load, initialize the perturbation dropdown for the default Task and set the video accordingly.
+  window.addEventListener('DOMContentLoaded', () => {
+    updatePerturbationDropdown(taskSelect.value);
+    updateVideo();
+  });
+</script>
 </body>
 </html>
